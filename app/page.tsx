@@ -4,11 +4,17 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 const images = [
-  { src: "/ff.jpg", width: 240, height: 300 },
+  { src: "/kaoruko.jpg", width: 240, height: 300 },
   { src: "/flower.jpg", width: 240, height: 340 },
   { src: "/fmty.jpg", width: 240, height: 300 },
   { src: "/kimi.jpg", width: 240, height: 320 },
   { src: "/kk.jpg", width: 240, height: 300 },
+  { src: "/cc1.jpg", width: 240, height: 320 },
+  { src: "/cc2.jpg", width: 240, height: 320 },
+  { src: "/cc3.jpg", width: 240, height: 320 },
+  { src: "/cc4.jpg", width: 240, height: 320 },
+  { src: "/cc5.jpg", width: 240, height: 320 },
+  { src: "/cc6.jpg", width: 240, height: 320 },
 ];
 
 export default function Home() {
