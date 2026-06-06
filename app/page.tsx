@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 const images = [
@@ -13,6 +13,7 @@ const images = [
 
 export default function Home() {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [imageIndex, setImageIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -38,12 +39,25 @@ export default function Home() {
       let newX = prev.x + randomOffset();
       let newY = prev.y + randomOffset();
 
-      // Responsive bounds based on viewport
-      const maxX = typeof window !== "undefined" ? window.innerWidth * 0.3 : 300;
-      const maxY = typeof window !== "undefined" ? window.innerHeight * 0.25 : 250;
+      // Calculate exact bounds using the form's real size
+      if (formRef.current) {
+        const rect = formRef.current.getBoundingClientRect();
+        const formW = rect.width;
+        const formH = rect.height;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
 
-      newX = Math.max(-maxX, Math.min(maxX, newX));
-      newY = Math.max(-maxY, Math.min(maxY, newY));
+        // The form is centered, so its default center is (vw/2, vh/2).
+        // With translate(x,y) the form's left edge = (vw - formW) / 2 + x
+        // It must stay >= 0 and right edge <= vw
+        const maxX = (vw - formW) / 2;
+        const maxY = (vh - formH) / 2;
+
+        // Clamp with a small padding so it doesn't touch edges
+        const pad = 8;
+        newX = Math.max(-(maxX - pad), Math.min(maxX - pad, newX));
+        newY = Math.max(-(maxY - pad), Math.min(maxY - pad, newY));
+      }
 
       return { x: newX, y: newY };
     });
@@ -63,6 +77,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-pink-300 overflow-hidden px-4">
       <form
+        ref={formRef}
         className="border border-2 rounded-md p-6 sm:p-10 flex flex-col gap-5 sm:gap-8 items-center bg-clip-padding backdrop-blur-sm bg-white/30 transition-transform duration-300 ease-out w-full max-w-xs sm:max-w-md"
         style={{
           transform: `translate(${position.x}px, ${position.y}px)`,
